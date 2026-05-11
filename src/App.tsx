@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AppShell } from './components/layout/AppShell'
 import { useAuth } from './hooks/useAuth'
 import { useProgressSync } from './hooks/useProgressSync'
@@ -89,8 +89,8 @@ export default function App() {
   if (loading) return <Spinner />
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <AppRoutes />
-    </BrowserRouter>
+    </HashRouter>
   )
 }
