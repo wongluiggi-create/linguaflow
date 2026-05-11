@@ -3,6 +3,7 @@ import { AppShell } from './components/layout/AppShell'
 import { useAuth } from './hooks/useAuth'
 import { useProgressSync } from './hooks/useProgressSync'
 import { useAppStore } from './store/useAppStore'
+import { isFirebaseConfigured } from './lib/firebase'
 import Login from './pages/Login'
 import PlacementTest from './pages/PlacementTest'
 import Dashboard from './pages/Dashboard'
@@ -48,14 +49,20 @@ function AppRoutes() {
   const { isAuthenticated, screen } = useAppStore()
 
   const inApp = isAuthenticated || screen === 'app'
+  // When Firebase is not configured, skip login and go straight to placement
+  const loginTarget = isFirebaseConfigured ? '/login' : '/placement'
 
   return (
     <Routes>
-      {/* Root: redirect authenticated users straight into the app */}
-      <Route path="/" element={<Navigate to={inApp ? '/app/dashboard' : '/login'} replace />} />
+      {/* Root redirect */}
+      <Route path="/" element={<Navigate to={inApp ? '/app/dashboard' : loginTarget} replace />} />
 
       {/* Auth / onboarding */}
-      <Route path="/login" element={inApp ? <Navigate to="/app/dashboard" replace /> : <Login />} />
+      <Route path="/login" element={
+        inApp ? <Navigate to="/app/dashboard" replace /> :
+        !isFirebaseConfigured ? <Navigate to="/placement" replace /> :
+        <Login />
+      } />
       <Route path="/placement" element={inApp ? <Navigate to="/app/dashboard" replace /> : <PlacementTest />} />
 
       {/* Protected app */}
